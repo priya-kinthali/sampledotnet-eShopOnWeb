@@ -1,0 +1,37 @@
+name: DotNet
+on:
+
+  push:
+    branches: [537-testversion]
+  # workflow_dispatch:
+  #   inputs:
+  #     buildArgs:
+  #       description: 'Arguments for the build'
+  #       required: false
+  #       default: ''
+
+jobs:
+  build:
+    runs-on: windows-2022
+   
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup .NET 8.0.300
+        uses: actions/setup-dotnet@v4.0.1
+        with:
+          dotnet-version: 8.0.300
+
+      - name: Run Uno Check
+        shell: pwsh
+        run: |
+          dotnet tool install --global Uno.Check --version 1.25.1
+          uno-check -v --ci --non-interactive --fix --verbose --skip xcode --skip gtk3 --skip vswin --skip androidemulator --skip androidsdk --skip vsmac --skip dotnetnewunotemplates
+
+      - name: Setup MSBuild
+        uses: microsoft/setup-msbuild@v2
+
+      - name: Build Packages
+        shell: pwsh
+        run: |
+          msbuild ./eShopOnWeb.sln /r /p:Configuration Release 
