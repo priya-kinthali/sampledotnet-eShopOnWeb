@@ -34,4 +34,4 @@ jobs:
       - name: Build Packages
         shell: pwsh
         run: |
-          msbuild ./eShopOnWeb.sln /r /p:Configuration Release 
+          msbuild ./eShopOnWeb.sln /r /p:Configuration=Release 
